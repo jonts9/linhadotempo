@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Timeline Familiar</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+      background: #f9f9f9;
+      color: #333;
+    }
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .year-bar {
+      position: relative;
+      height: 30px;
+      background-color: #ddd;
+    }
+    .age-bar {
+      position: absolute;
+      height: 100%;
+      background-color: #4caf50;
+      color: white;
+      text-align: center;
+      font-size: 12px;
+      line-height: 30px;
+      border-radius: 4px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .year-label {
+      position: absolute;
+      left: 4px;
+      top: 0;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Timeline da Família</h1>
+  <div class="timeline" id="timeline"></div>
+
+  <script>
+    const timelineEl = document.getElementById("timeline");
+
+    const pessoa = {
+      nome: "Você",
+      nascimento: new Date("1989-06-28"),
+    };
+
+    const startYear = 1980;
+    const endYear = 2030;
+
+    const getDayOfYear = (date) => {
+      const start = new Date(date.getFullYear(), 0, 0);
+      const diff = date - start + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    };
+
+    const birthdayPosition = getDayOfYear(pessoa.nascimento) / 365; // Aproximação
+    const birthYear = pessoa.nascimento.getFullYear();
+
+    for (let year = startYear; year <= endYear; year++) {
+      const yearBar = document.createElement("div");
+      yearBar.className = "year-bar";
+
+      const yearLabel = document.createElement("span");
+      yearLabel.className = "year-label";
+      yearLabel.textContent = year;
+      yearBar.appendChild(yearLabel);
+
+      // Calcular idade nesse ano
+      const age = year - birthYear;
+
+      if (age >= 0) {
+        const ageBar = document.createElement("div");
+        ageBar.className = "age-bar";
+
+        // calcular início e fim da faixa
+        const startPercent = birthdayPosition * 100;
+        const widthPercent = 100; // largura padrão
+
+        ageBar.style.left = `${startPercent}%`;
+        ageBar.style.width = `${100 - startPercent}%`;
+
+        // Se não for o primeiro ano, ajusta para começar do início
+        if (age > 0) {
+          ageBar.style.left = "0%";
+          ageBar.style.width = `${startPercent}%`;
+        }
+
+        ageBar.textContent = `${age} ${age === 1 ? "ano" : "anos"}`;
+
+        yearBar.appendChild(ageBar);
+      }
+
+      timelineEl.appendChild(yearBar);
+    }
+  </script>
+</body>
+</html>

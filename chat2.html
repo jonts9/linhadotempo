@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Timeline Vertical</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      margin: 2rem;
+      color: #333;
+    }
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .year-row {
+      position: relative;
+      height: 40px;
+      border-left: 4px solid #bbb;
+      background-color: #eee;
+    }
+    .year-label {
+      position: absolute;
+      left: -50px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: #666;
+    }
+    .age-bar {
+      position: absolute;
+      height: 60%;
+      top: 20%;
+      background-color: #4caf50;
+      color: white;
+      font-size: 10px;
+      line-height: 1;
+      border-radius: 2px;
+      padding: 2px 4px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Timeline da Família (Vertical)</h1>
+  <div class="timeline" id="timeline"></div>
+
+  <script>
+    const timelineEl = document.getElementById("timeline");
+
+    const pessoa = {
+      nome: "Você",
+      nascimento: new Date("1989-06-28"),
+    };
+
+    const startYear = 1980;
+    const endYear = 2030;
+
+    const getDayOfYear = (date) => {
+      const start = new Date(date.getFullYear(), 0, 0);
+      const diff = date - start + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+      return Math.floor(diff / (1000 * 60 * 60 * 24));
+    };
+
+    const birthdayPosition = getDayOfYear(pessoa.nascimento) / 365; // aprox.
+    const birthYear = pessoa.nascimento.getFullYear();
+
+    for (let year = startYear; year <= endYear; year++) {
+      const yearRow = document.createElement("div");
+      yearRow.className = "year-row";
+
+      const label = document.createElement("span");
+      label.className = "year-label";
+      label.textContent = year;
+      yearRow.appendChild(label);
+
+      const age = year - birthYear;
+      if (age >= 0) {
+        const bar = document.createElement("div");
+        bar.className = "age-bar";
+
+        let left = birthdayPosition * 100;
+        let width = 100 - left;
+
+        if (age > 0) {
+          left = 0;
+          width = birthdayPosition * 100;
+        }
+
+        bar.style.left = `${left}%`;
+        bar.style.width = `${width}%`;
+        bar.textContent = `${age} ${age === 1 ? "ano" : "anos"}`;
+
+        yearRow.appendChild(bar);
+      }
+
+      timelineEl.appendChild(yearRow);
+    }
+  </script>
+</body>
+</html>
